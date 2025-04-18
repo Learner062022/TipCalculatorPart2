@@ -3,26 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DylanDeSouzaTipCalculator.Preferences"
              xmlns:local="clr-namespace:DylanDeSouzaTipCalculator"
-             xmlns:sf="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
-             x:DataType="local:Model">
-    
+             x:DataType="local:Model"
+             BackgroundColor="{AppThemeBinding Light='White', Dark='Black'}">
+
     <VerticalStackLayout>
         <StackLayout>
             <HorizontalStackLayout>
                 <Label Text="Sound"/>
                 <Switch IsToggled="{Binding PlaySound}"/>
             </HorizontalStackLayout>
-            <Picker SelectedItem="{Binding ColorScheme}" Title="Color Scheme" ItemsSource="{Binding Colors}"/>
+
+            <Picker SelectedItem="{Binding ColorChoice}"
+                    Title="Color Scheme"
+                    ItemsSource="{Binding ColorChoices}"/>
+
             <HorizontalStackLayout>
                 <Label Text="Theme"/>
                 <Switch IsToggled="{Binding ThemeIsToggled}"/>
             </HorizontalStackLayout>
-            <Label Text="Font Size"/>
-            <sf:SfSlider Value="{Binding FontSize}">
-                <sf:SfSlider.Tooltip>
-                    <sf:SliderTooltip ShowAlways="False" NumberFormat="P0"/>
-                </sf:SfSlider.Tooltip>
-            </sf:SfSlider>
         </StackLayout>
     </VerticalStackLayout>
 </ContentPage>
