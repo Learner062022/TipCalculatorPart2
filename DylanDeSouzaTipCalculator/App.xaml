@@ -1,45 +1,14 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:DylanDeSouzaTipCalculator"
-             x:Class="DylanDeSouzaTipCalculator.App"
-             x:DataType="local:Model">
-    
+             x:Class="DylanDeSouzaTipCalculator.App">
+
     <Application.Resources>
         <ResourceDictionary>
-            <!--<Color x:Key="Background_Dark">Black</Color>
-            <Color x:Key="Background_Light">White</Color>-->
-            <!--need to understand central dynamic resource for FontSize>
-                - Learn how to define a `DynamicResource` for `FontSize` in a global scope to centralize control for all controls inheriting from View.
-                - Explore how dynamic resources enable runtime updates to affect all controls referencing the resource.-->
-
-            <!--need to understand how to use data triggers to change the font size dynamically based on actions/preferences
-                - Understand how to use `DataTrigger` in XAML to apply conditional changes to `FontSize` based on user actions or preferences.
-                - Implement triggers that respond to properties or events in the ViewModel to dynamically adjust font sizes-->
-
-            <!--need to understand how to manipulate Application.Resources/resource dictionaries
-                - Gain knowledge on organizing and managing `ResourceDictionary` objects to define, merge, and update application-wide resources.
-                - Learn how to programmatically modify `Application.Resources` to support dynamic updates for themes or user preferences.-->
-            
-            <!--<ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>-->
-            
-            <!--Need to explain what reflection is-->
-
-            <!--<Style TargetType="VisualElement"
-                   ApplyToDerivedTypes="True">
-                <Style.Triggers>
-                    <Trigger TargetType="VisualElement"
-                             Property="{Binding ThemeIsToggled}">
-                        <Setter Property="BackgroundColor" 
-                                Value="{AppThemeBinding Dark=Black, Light=White}"/>
-                        --><!--Value="{AppThemeBinding Dark={StaticResource Background_Dark}, Light={StaticResource Background_Light}}"/>--><!--
-                    </Trigger>
-                </Style.Triggers>
-            </Style>-->
-
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
