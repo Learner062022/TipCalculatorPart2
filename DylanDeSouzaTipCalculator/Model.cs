@@ -10,44 +10,44 @@ namespace DylanDeSouzaTipCalculator
 
         string billAmount = "0";
         int amountDiners;
+        bool decimalButtonPressed;
+        int amountDecimalNumbers;
         double tipPercentage;
         bool themeIsToggled;
         string? colorChoice;
-        readonly List<string> colorChoices = ["None", "Red", "Green", "Blue"];
-        Color? selectedBackgroundColor;
-        IAudioPlayer? buttonSound;
-        bool decimalButtonPressed;
-        int amountDecimalNumbers;
+        Color selectedBackgroundColor = Colors.Red;
         bool playSound;
         double fontSize;
         string? currentPageOn;
+        IAudioPlayer? buttonSound;
+
+        static readonly List<string> colorChoices = ["Red", "Green", "Blue"];
 
         public string BillAmount
         {
             get => billAmount;
-            set
-            {
-                if (billAmount != value)
-                {
-                    billAmount = value;
-                    OnPropertyChanged();
-                    NotifyDependentProperties(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
-                }
-            }
+            set => UpdateField(ref billAmount, value, nameof(TipAmount), nameof(Total), nameof(SplitAmount));
         }
 
         public int AmountDiners
         {
+            // issue isn't with label, as hardcoded value is displayed, so why isn't 1 showing?. Total amount is changing in response to amount diners when amountDiners is returned, so amount diners is being increemnted and decremented.
             get => amountDiners;
-            set
-            {
-                if (amountDiners != value)
-                {
-                    amountDiners = value;
-                    OnPropertyChanged();
-                    NotifyDependentProperties(nameof(SplitAmount));
-                }
-            }
+            set => UpdateField(ref amountDiners, value, nameof(SplitAmount));
+        }
+
+        public bool DecimalButtonPressed
+        {
+            get => decimalButtonPressed;
+            set => UpdateField(ref decimalButtonPressed, value);
+        }
+
+        public void PlayButtonSound() => buttonSound?.Play();
+
+        public int AmountDecimalNumbers
+        {
+            get => amountDecimalNumbers;
+            set => UpdateField(ref amountDecimalNumbers, value);
         }
 
         public double TipPercentage
@@ -55,9 +55,12 @@ namespace DylanDeSouzaTipCalculator
             get => tipPercentage;
             set
             {
-                tipPercentage = value;
-                OnPropertyChanged();
-                NotifyDependentProperties(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+                if (tipPercentage != value)
+                {
+                    tipPercentage = value;
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(TipPercentage), tipPercentage);
+                    NotifyDependentProperties(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+                }
             }
         }
 
@@ -65,7 +68,7 @@ namespace DylanDeSouzaTipCalculator
 
         public double Total => TipAmount + double.Parse(BillAmount);
 
-        public double SplitAmount => AmountDiners > 0 ? Total / AmountDiners : 0;
+        public double SplitAmount => amountDiners > 0 ? Total / amountDiners : 0;
 
         public bool ThemeIsToggled
         {
@@ -75,91 +78,34 @@ namespace DylanDeSouzaTipCalculator
                 if (themeIsToggled != value)
                 {
                     themeIsToggled = value;
-                    SetUserAppTheme(themeIsToggled);
-                    OnPropertyChanged();
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ThemeIsToggled), themeIsToggled);
+                    Application.Current.UserAppTheme = themeIsToggled ? AppTheme.Dark : AppTheme.Light;
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        public string? ColorChoice
+        public string ColorChoice
         {
-            get => colorChoice;
+            get => colorChoice ?? "Red";
             set
             {
+                if (string.IsNullOrEmpty(value)) value = "Red";
+
                 if (colorChoice != value)
                 {
                     colorChoice = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ColorChoice), colorChoice);
-                    OnPropertyChanged();
-                    UpdateSelectedColor(colorChoice);
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ColorChoice), value);
+                    UpdateSelectedColor(value);
+                    NotifyPropertyChanged(nameof(ColorChoice), nameof(SelectedBackgroundColor));
                 }
             }
         }
 
-        void UpdateSelectedColor(string colorChoice)
-        {
-            SelectedBackgroundColor = colorChoice switch
-            {
-                "Red" => Colors.Red,
-                "Green" => Colors.Green,
-                "Blue" => Colors.Blue,
-                _ => null
-            };
-        }
-
-        public List<string> ColorChoices => colorChoices;
-
-        public Color? SelectedBackgroundColor
+        public Color SelectedBackgroundColor
         {
             get => selectedBackgroundColor;
-            set
-            {
-                if (selectedBackgroundColor != value)
-                {
-                    selectedBackgroundColor = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string? CurrentPageOn
-        {
-            get => currentPageOn;
-            set
-            {
-                if (currentPageOn != value)
-                {
-                    currentPageOn = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(CurrentPageOn), currentPageOn);
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public bool DecimalButtonPressed
-        {
-            get => decimalButtonPressed;
-            set
-            {
-                if (decimalButtonPressed != value)
-                {
-                    decimalButtonPressed = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public int AmountDecimalNumbers
-        {
-            get => amountDecimalNumbers;
-            set
-            {
-                if (amountDecimalNumbers != value)
-                {
-                    amountDecimalNumbers = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => UpdateField(ref selectedBackgroundColor, value);
         }
 
         public bool PlaySound
@@ -170,7 +116,8 @@ namespace DylanDeSouzaTipCalculator
                 if (playSound != value)
                 {
                     playSound = value;
-                    OnPropertyChanged();
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(PlaySound), playSound);
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -183,76 +130,133 @@ namespace DylanDeSouzaTipCalculator
                 if (fontSize != value)
                 {
                     fontSize = value;
-                    OnPropertyChanged();
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(FontSize), fontSize);
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        void SetUserAppTheme(bool isDarkModeEnabled)
+        public string CurrentPageOn
         {
-            Application.Current.UserAppTheme = isDarkModeEnabled ? AppTheme.Dark : AppTheme.Light;
-            OnPropertyChanged(nameof(ThemeIsToggled));
+            get => currentPageOn;
+            set
+            {
+                if (currentPageOn != value)
+                {
+                    currentPageOn = value;
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(CurrentPageOn), currentPageOn);
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
-        void NotifyDependentProperties(params string[] propertyNames)
-        {
-            foreach (var propertyName in propertyNames)
-                OnPropertyChanged(propertyName);
-        }
+        public List<string> ColorChoices => colorChoices;
 
         public void Reset()
         {
-            BillAmount = "0";
-            AmountDiners = 1;
-            AmountDecimalNumbers = 0;
-            DecimalButtonPressed = false;
+            billAmount = "0";
+            amountDiners = 1;
+            amountDecimalNumbers = 0;
+            decimalButtonPressed = false;
             NotifyDependentProperties(nameof(BillAmount), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
         }
 
         public void HandleNumericInput(string value)
         {
-            if (DecimalButtonPressed && AmountDecimalNumbers >= 2) return;
-
-            if (DecimalButtonPressed) AmountDecimalNumbers++;
-
-            BillAmount = BillAmount == "0" ? value : BillAmount + value;
+            if (decimalButtonPressed && amountDecimalNumbers >= 2) return;
+            if (decimalButtonPressed) amountDecimalNumbers++;
+            billAmount = billAmount == "0" ? value : billAmount + value;
+            NotifyPropertyChanged(nameof(BillAmount));
         }
 
         public void HandleDecimalInput()
         {
-            if (DecimalButtonPressed) return;
+            if (decimalButtonPressed) return;
 
-            DecimalButtonPressed = true;
-            BillAmount += ".";
+            decimalButtonPressed = true;
+            billAmount += ".";
+            NotifyPropertyChanged(nameof(BillAmount));
         }
 
-        public async Task InitializeAudioPlayerAsync() =>
+        public async Task InitializeAudioPlayerAsync()
+        {
             buttonSound ??= AudioManager.Current.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tap.wav"));
+        }
 
-        public void PlayButtonSound() => buttonSound?.Play();
+        public void UpdateSelectedColor(string colorChoice)
+        {
+            var colorMapping = new Dictionary<string, Color>
+            {
+                { "Red", Colors.Red },
+                { "Green", Colors.Green },
+                { "Blue", Colors.Blue }
+            };
+
+            if (colorMapping.TryGetValue(colorChoice, out var color))
+                SelectedBackgroundColor = color;
+        }
 
         public void LoadMainPagePreferences()
         {
-            BillAmount = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(BillAmount), "0");
-            AmountDiners = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(AmountDiners), 1);
-            TipPercentage = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(TipPercentage), 0.0);
-            DecimalButtonPressed = BillAmount.Contains('.');
-            AmountDecimalNumbers = DecimalButtonPressed
-                ? BillAmount.Length - (BillAmount.IndexOf('.') + 1)
-                : 0;
+            billAmount = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(BillAmount), "0");
+            amountDiners = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(AmountDiners), 1);
+            tipPercentage = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(TipPercentage), 0.0);
+
+            decimalButtonPressed = billAmount.Contains('.');
+            amountDecimalNumbers = decimalButtonPressed ? billAmount.Length - (billAmount.IndexOf('.') + 1) : 0;
+
+            NotifyDependentProperties(nameof(BillAmount), nameof(AmountDiners), nameof(TipPercentage), nameof(decimalButtonPressed), nameof(amountDecimalNumbers));
         }
 
         public void LoadPreferencesPageSettings()
         {
-            PlaySound = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(PlaySound), false);
-            ThemeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ThemeIsToggled), true);
-            FontSize = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(FontSize), 0.0);
-            CurrentPageOn = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(CurrentPageOn), "main");
-            ColorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
-            UpdateSelectedColor(ColorChoice);
+            LoadPreferenceValues();
+            UpdateUIProperties();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
+        void LoadPreferenceValues()
+        {
+            playSound = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(PlaySound), false);
+            themeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ThemeIsToggled), true);
+            fontSize = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(FontSize), 14.0);
+            colorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
+            UpdateSelectedColor(colorChoice);
+        }
+
+        void UpdateUIProperties()
+        {
+            NotifyPropertyChanged(nameof(PlaySound), nameof(ThemeIsToggled), nameof(FontSize), nameof(ColorChoice), nameof(SelectedBackgroundColor));
+        }
+
+        void UpdateField<T>(ref T field, T value, params string[] dependentProperties)
+        {
+            if (!EqualityComparer<T>.Default.Equals(field, value))
+            {
+                field = value;
+                NotifyPropertyChanged();
+                NotifyDependentProperties(dependentProperties);
+            }
+        }
+
+        void NotifyPropertyChanged(params string[] propertyNames)
+        {
+            foreach (var propertyName in propertyNames)
+            {
+                NotifyPropertyChanged(propertyName);
+            }
+        }
+
+        protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        void NotifyDependentProperties(params string[] propertyNames)
+        {
+            foreach (var propertyName in propertyNames)
+            {
+                NotifyPropertyChanged(propertyName);
+            }
+        }
     }
 }
