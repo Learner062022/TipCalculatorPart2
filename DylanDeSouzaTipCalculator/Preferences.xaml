@@ -2,25 +2,50 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DylanDeSouzaTipCalculator.Preferences"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              xmlns:local="clr-namespace:DylanDeSouzaTipCalculator"
              x:DataType="local:Model"
              BackgroundColor="{AppThemeBinding Light='White', Dark='Black'}">
 
-    <VerticalStackLayout>
-        <StackLayout>
-            <HorizontalStackLayout>
-                <Label Text="Sound"/>
-                <Switch IsToggled="{Binding PlaySound}"/>
-            </HorizontalStackLayout>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <Picker SelectedItem="{Binding ColorChoice}"
-                    Title="Color Scheme"
-                    ItemsSource="{Binding ColorChoices}"/>
+        <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+            <Label Text="Sound" 
+                   VerticalTextAlignment="Center" />
+            <Switch IsToggled="{Binding PlaySound}" />
+        </VerticalStackLayout>
 
-            <HorizontalStackLayout>
-                <Label Text="Theme"/>
-                <Switch IsToggled="{Binding ThemeIsToggled}"/>
-            </HorizontalStackLayout>
-        </StackLayout>
-    </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Picker SelectedItem="{Binding ColorChoice}" 
+                    Title="Color Scheme" 
+                    ItemsSource="{Binding ColorChoices}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" Grid.Column="0">
+            <Label Text="Theme" 
+                   VerticalTextAlignment="Center" />
+            <Switch IsToggled="{Binding ThemeIsToggled}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="3" Grid.ColumnSpan="2">
+            <Label Text="Font Size" 
+                   VerticalTextAlignment="Center" HorizontalOptions="Center"/>
+            <sf:SfSlider Value="{Binding FontSize}">
+                <sf:SfSlider.Tooltip>
+                    <sf:SliderTooltip ShowAlways="False" 
+                                      NumberFormat="P0" />
+                </sf:SfSlider.Tooltip>
+            </sf:SfSlider>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
