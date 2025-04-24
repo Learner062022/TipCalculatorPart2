@@ -4,20 +4,24 @@ namespace DylanDeSouzaTipCalculator
 {
     public partial class App : Application
     {
-        Model model = new();
+        readonly Model model = new();
 
-        public App()
+        public App() => InitializeComponent();
+
+        protected override Window CreateWindow(IActivationState? activationState)
+            => new(new AppShell());
+
+        protected async override void OnStart()
         {
-            SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhKYVFzWmFZfVtgdVdMZFxbRXZPMyBoS35Rc0VhW3xed3VSRWheV0F+");
-            InitializeComponent();
-        }
-
-        protected override Window CreateWindow(IActivationState? activationState) => new(new AppShell());
-
-        protected override void OnStart()
-        {
-            model.ThemeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(model.ThemeIsToggled), false);
+            SyncfusionLicenseProvider.RegisterLicense(
+                "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhKYVFzWmFZfVtgdVdMZFxbRXZPMyBoS35Rc0VhW3xed3VSRWheV0F+");
+            model.LoadPreferencesPageSettings();
+            model.LoadMainPagePreferences();
             Current.UserAppTheme = model.ThemeIsToggled ? AppTheme.Dark : AppTheme.Light;
+            await InitializeAudioPlayer();
         }
+
+        async Task InitializeAudioPlayer() =>
+            await model.InitializeAudioPlayerAsync();
     }
 }
