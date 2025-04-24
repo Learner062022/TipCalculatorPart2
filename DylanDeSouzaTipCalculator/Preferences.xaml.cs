@@ -2,14 +2,20 @@ namespace DylanDeSouzaTipCalculator
 {
     public partial class Preferences : ContentPage
     {
-        private readonly Model model;
+        readonly Model model;
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            model.LoadPreferencesPageSettings();
+        }
+
 
         public Preferences(Model model)
         {
             InitializeComponent();
             this.model = model;
-            model.LoadPreferencesPageSettings();
-            BindingContext = this.model;
+            BindingContext = this.model; 
         }
 
         protected override bool OnBackButtonPressed()
