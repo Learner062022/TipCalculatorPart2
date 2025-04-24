@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace DylanDeSouzaTipCalculator
+﻿namespace DylanDeSouzaTipCalculator
 {
     public partial class MainPage : ContentPage
     {
@@ -28,7 +26,7 @@ namespace DylanDeSouzaTipCalculator
         {
             var button = (Button)sender;
             if (model.PlaySound) model.PlayButtonSound();
-            
+
             switch (button.Text)
             {
                 case "C":
