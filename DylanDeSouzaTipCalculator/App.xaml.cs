@@ -11,17 +11,17 @@ namespace DylanDeSouzaTipCalculator
         protected override Window CreateWindow(IActivationState? activationState)
             => new(new AppShell());
 
-        protected async override void OnStart()
+        protected override void OnStart()
         {
             SyncfusionLicenseProvider.RegisterLicense(
                 "Ngo9BigBOggjHTQxAR8/V1NMaF1cXmhKYVFzWmFZfVtgdVdMZFxbRXZPMyBoS35Rc0VhW3xed3VSRWheV0F+");
             model.LoadPreferencesPageSettings();
             model.LoadMainPagePreferences();
             Current.UserAppTheme = model.ThemeIsToggled ? AppTheme.Dark : AppTheme.Light;
-            await InitializeAudioPlayer();
+            InitializeAudioPlayer();
         }
 
-        async Task InitializeAudioPlayer() =>
+        async void InitializeAudioPlayer() =>
             await model.InitializeAudioPlayerAsync();
     }
 }
