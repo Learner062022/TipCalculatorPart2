@@ -10,7 +10,6 @@ namespace DylanDeSouzaTipCalculator
             model.LoadPreferencesPageSettings();
         }
 
-
         public Preferences(Model model)
         {
             InitializeComponent();
