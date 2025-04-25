@@ -14,65 +14,44 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Bill:"/>
+                <Label Text="{Binding BillAmount, StringFormat='{0:F2}'}"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Tip:"/>
+                <Label Text="{Binding TipAmount, StringFormat='{0:F2}'}"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Total:"/>
+                <Label Text="{Binding Total, StringFormat='{0:F2}'}"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
 
-            <Label Text="Bill:" Grid.Row="0" Grid.Column="0"/>
-            <Label Text="Tip:" Grid.Row="1" Grid.Column="0"/>
-            <Label Text="Total:" Grid.Row="2" Grid.Column="0"/>
-
-            <Label Text="{Binding BillAmount, StringFormat='{0:F2}'}" Grid.Row="0" Grid.Column="1"/>
-            <Label Text="{Binding TipAmount, StringFormat='{0:F2}'}" Grid.Row="1" Grid.Column="1"/>
-            <Label Text="{Binding Total, StringFormat='{0:F2}'}" Grid.Row="2" Grid.Column="1"/>
-        </Grid>
-
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+        <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
+            <Label Text="Tip Percentage:" HorizontalOptions="Center" VerticalTextAlignment="Center"/>
             <sf:SfSlider Value="{Binding TipPercentage}">
                 <sf:SfSlider.Tooltip>
                     <sf:SliderTooltip ShowAlways="False" NumberFormat="P0"/>
                 </sf:SfSlider.Tooltip>
             </sf:SfSlider>
-        </Grid>
+        </StackLayout>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <VerticalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
+            <Label Text="Amount Diners:"/>
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="{Binding AmountDiners}"/>
+                <Stepper Increment="1" Minimum="1" Value="{Binding AmountDiners}" BackgroundColor="{AppThemeBinding Light='LightGray', Dark='Black'}"/>
+            </HorizontalStackLayout>
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Split Amount:"/>
+                <Label Text="{Binding SplitAmount, StringFormat='{0:F2}'}"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
 
-            <Grid Grid.Row="0">
-                <Label Text="Amount Diners:" Grid.Column="0" TextColor="{AppThemeBinding Light='Black', Dark='White'}"/>
-            </Grid>
-
-            <Grid Grid.Row="1">
-                <Label Text="{Binding AmountDiners}" Grid.Column="0"/>
-                <Stepper Grid.Column="1"
-                     Increment="1"
-                     Minimum="1"
-                     Value="{Binding AmountDiners}"
-                     BackgroundColor="{AppThemeBinding Light='LightGray', Dark='Black'}"/>
-            </Grid>
-        </Grid>
-
-        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -88,21 +67,19 @@
             <Button Text="7" Grid.Row="0" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="8" Grid.Row="0" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="9" Grid.Row="0" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-
             <Button Text="4" Grid.Row="1" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="5" Grid.Row="1" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="6" Grid.Row="1" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-
             <Button Text="1" Grid.Row="2" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="2" Grid.Row="2" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="3" Grid.Row="2" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-
             <Button Text="0" Grid.Row="3" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="." Grid.Row="3" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
             <Button Text="C" Grid.Row="3" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
         </Grid>
 
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+    
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
             <Button Text="Prefs" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
         </Grid>
     </Grid>
