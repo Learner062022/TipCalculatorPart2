@@ -1,4 +1,6 @@
-﻿namespace DylanDeSouzaTipCalculator
+﻿using System.Diagnostics;
+
+namespace DylanDeSouzaTipCalculator
 {
     public partial class MainPage : ContentPage
     {
@@ -10,17 +12,19 @@
             InitializeComponent();
             model = new Model();
             prefs = new Preferences(model);
-
-            model.LoadMainPagePreferences();
             InitializeModelAudio();
-            BindingContext = model;
             if (model.CurrentPageOn == "prefs") Navigation.PushAsync(prefs);
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            model.LoadMainPagePreferences();
+            BindingContext = model;
         }
 
         async void InitializeModelAudio() =>
             await model.InitializeAudioPlayerAsync();
-
-        void Reset() => model.Reset();
 
         void Button_Clicked(object sender, EventArgs e)
         {
@@ -30,7 +34,7 @@
             switch (button.Text)
             {
                 case "C":
-                    Reset();
+                    model.Reset();
                     break;
                 case ".":
                     model.HandleDecimalInput();
