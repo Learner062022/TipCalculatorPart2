@@ -1,5 +1,6 @@
 ﻿using Plugin.Maui.Audio;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace DylanDeSouzaTipCalculator
@@ -15,11 +16,11 @@ namespace DylanDeSouzaTipCalculator
         double tipPercentage;
         bool themeIsToggled;
         string? colorChoice;
-        Color selectedBackgroundColor = Colors.Red;
         bool playSound;
         double fontSize;
         string? currentPageOn;
         IAudioPlayer? buttonSound;
+        Color? selectedBackgroundColor;
 
         static readonly List<string> colorChoices = ["Red", "Green", "Blue"];
 
@@ -31,24 +32,16 @@ namespace DylanDeSouzaTipCalculator
 
         public int AmountDiners
         {
-            // issue isn't with label, as hardcoded value is displayed, so why isn't 1 showing?. Total amount is changing in response to amount diners when amountDiners is returned, so amount diners is being increemnted and decremented.
             get => amountDiners;
-            set => UpdateField(ref amountDiners, value, nameof(SplitAmount));
-        }
-
-        public bool DecimalButtonPressed
-        {
-            get => decimalButtonPressed;
-            set => UpdateField(ref decimalButtonPressed, value);
+            set
+            {
+                UpdateField(ref amountDiners, value, nameof(SplitAmount));
+                NotifyPropertyChanged(nameof(AmountDiners));
+                Microsoft.Maui.Storage.Preferences.Default.Set(nameof(AmountDiners), amountDiners); 
+            } 
         }
 
         public void PlayButtonSound() => buttonSound?.Play();
-
-        public int AmountDecimalNumbers
-        {
-            get => amountDecimalNumbers;
-            set => UpdateField(ref amountDecimalNumbers, value);
-        }
 
         public double TipPercentage
         {
@@ -59,7 +52,7 @@ namespace DylanDeSouzaTipCalculator
                 {
                     tipPercentage = value;
                     Microsoft.Maui.Storage.Preferences.Default.Set(nameof(TipPercentage), tipPercentage);
-                    NotifyDependentProperties(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+                    NotifyMultiplePropertiesChanged(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
                 }
             }
         }
@@ -85,27 +78,32 @@ namespace DylanDeSouzaTipCalculator
             }
         }
 
-        public string ColorChoice
+        public string? ColorChoice
         {
-            get => colorChoice ?? "Red";
+            get => colorChoice;
             set
             {
-                if (string.IsNullOrEmpty(value)) value = "Red";
-
                 if (colorChoice != value)
                 {
                     colorChoice = value;
                     Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ColorChoice), value);
-                    UpdateSelectedColor(value);
-                    NotifyPropertyChanged(nameof(ColorChoice), nameof(SelectedBackgroundColor));
+                    NotifyPropertyChanged(nameof(ColorChoice)); 
+                    NotifyPropertyChanged(nameof(SelectedBackgroundColor)); 
                 }
             }
         }
 
-        public Color SelectedBackgroundColor
+        public Color? SelectedBackgroundColor
         {
             get => selectedBackgroundColor;
-            set => UpdateField(ref selectedBackgroundColor, value);
+            set
+            {
+                if (selectedBackgroundColor != value)
+                {
+                    selectedBackgroundColor = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public bool PlaySound
@@ -136,7 +134,7 @@ namespace DylanDeSouzaTipCalculator
             }
         }
 
-        public string CurrentPageOn
+        public string? CurrentPageOn
         {
             get => currentPageOn;
             set
@@ -158,7 +156,7 @@ namespace DylanDeSouzaTipCalculator
             amountDiners = 1;
             amountDecimalNumbers = 0;
             decimalButtonPressed = false;
-            NotifyDependentProperties(nameof(BillAmount), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+            NotifyMultiplePropertiesChanged(nameof(BillAmount), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
         }
 
         public void HandleNumericInput(string value)
@@ -178,55 +176,35 @@ namespace DylanDeSouzaTipCalculator
             NotifyPropertyChanged(nameof(BillAmount));
         }
 
-        public async Task InitializeAudioPlayerAsync()
-        {
+        public async Task InitializeAudioPlayerAsync() =>
             buttonSound ??= AudioManager.Current.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tap.wav"));
-        }
-
-        public void UpdateSelectedColor(string colorChoice)
-        {
-            var colorMapping = new Dictionary<string, Color>
-            {
-                { "Red", Colors.Red },
-                { "Green", Colors.Green },
-                { "Blue", Colors.Blue }
-            };
-
-            if (colorMapping.TryGetValue(colorChoice, out var color))
-                SelectedBackgroundColor = color;
-        }
 
         public void LoadMainPagePreferences()
         {
             billAmount = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(BillAmount), "0");
             amountDiners = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(AmountDiners), 1);
             tipPercentage = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(TipPercentage), 0.0);
-
             decimalButtonPressed = billAmount.Contains('.');
             amountDecimalNumbers = decimalButtonPressed ? billAmount.Length - (billAmount.IndexOf('.') + 1) : 0;
-
-            NotifyDependentProperties(nameof(BillAmount), nameof(AmountDiners), nameof(TipPercentage), nameof(decimalButtonPressed), nameof(amountDecimalNumbers));
+            ColorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
+            SelectedBackgroundColor = Color.Parse(ColorChoice);
+            NotifyMultiplePropertiesChanged(nameof(BillAmount), nameof(AmountDiners), nameof(TipPercentage), nameof(decimalButtonPressed), nameof(amountDecimalNumbers));
         }
 
         public void LoadPreferencesPageSettings()
         {
             LoadPreferenceValues();
-            UpdateUIProperties();
+            NotifyMultiplePropertiesChanged(nameof(PlaySound), nameof(ThemeIsToggled), nameof(FontSize), nameof(ColorChoice), nameof(SelectedBackgroundColor));
         }
 
         void LoadPreferenceValues()
         {
-            playSound = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(PlaySound), false);
-            themeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ThemeIsToggled), true);
-            fontSize = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(FontSize), 14.0);
-            colorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
-            UpdateSelectedColor(colorChoice);
-        }
-
-        void UpdateUIProperties()
-        {
-            NotifyPropertyChanged(nameof(PlaySound), nameof(ThemeIsToggled), nameof(FontSize), nameof(ColorChoice), nameof(SelectedBackgroundColor));
-        }
+            PlaySound = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(PlaySound), false);
+            ThemeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ThemeIsToggled), true);
+            FontSize = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(FontSize), 14.0);
+            ColorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
+            SelectedBackgroundColor = Color.Parse(ColorChoice);
+        }            
 
         void UpdateField<T>(ref T field, T value, params string[] dependentProperties)
         {
@@ -234,29 +212,17 @@ namespace DylanDeSouzaTipCalculator
             {
                 field = value;
                 NotifyPropertyChanged();
-                NotifyDependentProperties(dependentProperties);
+                NotifyMultiplePropertiesChanged(dependentProperties);
             }
         }
 
-        void NotifyPropertyChanged(params string[] propertyNames)
+        void NotifyMultiplePropertiesChanged(params string[] propertyNames)
         {
             foreach (var propertyName in propertyNames)
-            {
                 NotifyPropertyChanged(propertyName);
-            }
         }
 
-        protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
+        protected void NotifyPropertyChanged([CallerMemberName] string? propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        void NotifyDependentProperties(params string[] propertyNames)
-        {
-            foreach (var propertyName in propertyNames)
-            {
-                NotifyPropertyChanged(propertyName);
-            }
-        }
     }
 }
