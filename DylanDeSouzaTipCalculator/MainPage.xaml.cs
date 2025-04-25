@@ -12,13 +12,13 @@ namespace DylanDeSouzaTipCalculator
             InitializeComponent();
             model = new Model();
             prefs = new Preferences(model);
-            InitializeModelAudio();
             if (model.CurrentPageOn == "prefs") Navigation.PushAsync(prefs);
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            InitializeModelAudio();
             model.LoadMainPagePreferences();
             BindingContext = model;
         }
