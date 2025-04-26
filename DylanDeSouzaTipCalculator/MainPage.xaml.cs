@@ -12,6 +12,7 @@ namespace DylanDeSouzaTipCalculator
             InitializeComponent();
             model = new Model();
             prefs = new Preferences(model);
+            model.CurrentPageOn = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(model.CurrentPageOn), "main");
             if (model.CurrentPageOn == "prefs") Navigation.PushAsync(prefs);
         }
 
@@ -44,6 +45,7 @@ namespace DylanDeSouzaTipCalculator
                     break;
                 case "Prefs":
                     model.CurrentPageOn = "prefs";
+                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(model.CurrentPageOn), model.CurrentPageOn);
                     Navigation.PushAsync(prefs);
                     break;
                 default:
