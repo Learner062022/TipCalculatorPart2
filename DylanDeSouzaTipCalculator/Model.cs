@@ -10,56 +10,60 @@ namespace DylanDeSouzaTipCalculator
         public event PropertyChangedEventHandler? PropertyChanged;
 
         string billAmount = "0";
-        int amountDiners;
+        int amountDiners = 1;
         bool decimalButtonPressed;
         int amountDecimalNumbers;
-        double tipPercentage;
+        double tipPercentage = 0.0;
         bool themeIsToggled;
         string? colorChoice;
         bool playSound;
-        double fontSize;
+        double fontSize = 14.0;
         string? currentPageOn;
         IAudioPlayer? buttonSound;
         Color? selectedBackgroundColor;
-
         static readonly List<string> colorChoices = ["Red", "Green", "Blue"];
 
         public string BillAmount
         {
             get => billAmount;
-            set => UpdateField(ref billAmount, value, nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+            set
+            {
+                if (UpdateAndPersist(nameof(BillAmount), ref billAmount, value, nameof(BillAmount), nameof(TipAmount), nameof(Total), nameof(SplitAmount)))
+                    UpdateDecimalState();
+            }
         }
 
         public int AmountDiners
         {
             get => amountDiners;
-            set
-            {
-                UpdateField(ref amountDiners, value, nameof(SplitAmount));
-                NotifyPropertyChanged(nameof(AmountDiners));
-                Microsoft.Maui.Storage.Preferences.Default.Set(nameof(AmountDiners), amountDiners); 
-            } 
+            set => UpdateAndPersist(nameof(AmountDiners), ref amountDiners, value, nameof(AmountDiners), nameof(SplitAmount));
         }
-
-        public void PlayButtonSound() => buttonSound?.Play();
 
         public double TipPercentage
         {
             get => tipPercentage;
-            set
+            set => UpdateAndPersist(nameof(TipPercentage), ref tipPercentage, value, nameof(TipPercentage), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+        }
+
+        public double TipAmount
+        {
+            get
             {
-                if (tipPercentage != value)
-                {
-                    tipPercentage = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(TipPercentage), tipPercentage);
-                    NotifyMultiplePropertiesChanged(nameof(TipAmount), nameof(Total), nameof(SplitAmount));
-                }
+                if (TryParseBill(out var parsedAmount))
+                    return TipPercentage * parsedAmount;
+                return 0;
             }
         }
 
-        public double TipAmount => TipPercentage * double.Parse(BillAmount);
-
-        public double Total => TipAmount + double.Parse(BillAmount);
+        public double Total
+        {
+            get
+            {
+                if (TryParseBill(out var parsedAmount))
+                    return TipAmount + parsedAmount;
+                return TipAmount;
+            }
+        }
 
         public double SplitAmount => amountDiners > 0 ? Total / amountDiners : 0;
 
@@ -68,13 +72,8 @@ namespace DylanDeSouzaTipCalculator
             get => themeIsToggled;
             set
             {
-                if (themeIsToggled != value)
-                {
-                    themeIsToggled = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ThemeIsToggled), themeIsToggled);
+                if (UpdateAndPersist(nameof(ThemeIsToggled), ref themeIsToggled, value, nameof(ThemeIsToggled)))
                     Application.Current.UserAppTheme = themeIsToggled ? AppTheme.Dark : AppTheme.Light;
-                    NotifyPropertyChanged();
-                }
             }
         }
 
@@ -83,88 +82,56 @@ namespace DylanDeSouzaTipCalculator
             get => colorChoice;
             set
             {
-                if (colorChoice != value)
-                {
-                    colorChoice = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(ColorChoice), value);
-                    NotifyPropertyChanged(nameof(ColorChoice)); 
-                    NotifyPropertyChanged(nameof(SelectedBackgroundColor)); 
-                }
+                if (UpdateAndPersist(nameof(ColorChoice), ref colorChoice, value, nameof(ColorChoice), nameof(SelectedBackgroundColor)))
+                    SelectedBackgroundColor = Color.Parse(value);
             }
         }
 
         public Color? SelectedBackgroundColor
         {
             get => selectedBackgroundColor;
-            set
-            {
-                if (selectedBackgroundColor != value)
-                {
-                    selectedBackgroundColor = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set => UpdateField(ref selectedBackgroundColor, value, nameof(SelectedBackgroundColor));
         }
 
         public bool PlaySound
         {
             get => playSound;
-            set
-            {
-                if (playSound != value)
-                {
-                    playSound = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(PlaySound), playSound);
-                    NotifyPropertyChanged();
-                }
-            }
+            set => UpdateAndPersist(nameof(PlaySound), ref playSound, value, nameof(PlaySound));
         }
 
         public double FontSize
         {
             get => fontSize;
-            set
-            {
-                if (fontSize != value)
-                {
-                    fontSize = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(FontSize), fontSize);
-                    NotifyPropertyChanged();
-                }
-            }
+            set => UpdateAndPersist(nameof(FontSize), ref fontSize, value, nameof(FontSize));
         }
 
         public string? CurrentPageOn
         {
             get => currentPageOn;
-            set
-            {
-                if (currentPageOn != value)
-                {
-                    currentPageOn = value;
-                    Microsoft.Maui.Storage.Preferences.Default.Set(nameof(CurrentPageOn), currentPageOn);
-                    NotifyPropertyChanged();
-                }
-            }
+            set => UpdateAndPersist(nameof(CurrentPageOn), ref currentPageOn, value, nameof(CurrentPageOn));
         }
 
         public List<string> ColorChoices => colorChoices;
 
+        
+        public void PlayButtonSound() => buttonSound?.Play();
+
         public void Reset()
         {
-            billAmount = "0";
-            amountDiners = 1;
-            amountDecimalNumbers = 0;
+            BillAmount = "0";
+            AmountDiners = 1;
             decimalButtonPressed = false;
+            amountDecimalNumbers = 0;
+
             NotifyMultiplePropertiesChanged(nameof(BillAmount), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
         }
 
         public void HandleNumericInput(string value)
         {
             if (decimalButtonPressed && amountDecimalNumbers >= 2) return;
+
             if (decimalButtonPressed) amountDecimalNumbers++;
-            billAmount = billAmount == "0" ? value : billAmount + value;
-            NotifyPropertyChanged(nameof(BillAmount));
+            BillAmount = BillAmount == "0" ? value : BillAmount + value;
         }
 
         public void HandleDecimalInput()
@@ -172,8 +139,7 @@ namespace DylanDeSouzaTipCalculator
             if (decimalButtonPressed) return;
 
             decimalButtonPressed = true;
-            billAmount += ".";
-            NotifyPropertyChanged(nameof(BillAmount));
+            BillAmount += ".";
         }
 
         public async Task InitializeAudioPlayerAsync() =>
@@ -181,39 +147,67 @@ namespace DylanDeSouzaTipCalculator
 
         public void LoadMainPagePreferences()
         {
-            billAmount = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(BillAmount), "0");
-            amountDiners = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(AmountDiners), 1);
-            tipPercentage = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(TipPercentage), 0.0);
-            decimalButtonPressed = billAmount.Contains('.');
-            amountDecimalNumbers = decimalButtonPressed ? billAmount.Length - (billAmount.IndexOf('.') + 1) : 0;
-            ColorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
+            FontSize = LoadAndNotify(nameof(FontSize), 14.0, nameof(FontSize));
+            BillAmount = LoadAndNotify(nameof(BillAmount), "0", nameof(BillAmount), nameof(decimalButtonPressed), nameof(amountDecimalNumbers), nameof(TipAmount), nameof(Total), nameof(SplitAmount));
+            AmountDiners = LoadAndNotify(nameof(AmountDiners), 1, nameof(AmountDiners), nameof(SplitAmount));
+            TipPercentage = LoadPreference(nameof(TipPercentage), 0.0);
+
+            UpdateDecimalState(); 
+            ColorChoice = LoadAndNotify(nameof(ColorChoice), "Red", nameof(ColorChoice), nameof(SelectedBackgroundColor));
             SelectedBackgroundColor = Color.Parse(ColorChoice);
-            NotifyMultiplePropertiesChanged(nameof(BillAmount), nameof(AmountDiners), nameof(TipPercentage), nameof(decimalButtonPressed), nameof(amountDecimalNumbers));
         }
 
         public void LoadPreferencesPageSettings()
         {
+            Application.Current.UserAppTheme = ThemeIsToggled ? AppTheme.Dark : AppTheme.Light;
             LoadPreferenceValues();
             NotifyMultiplePropertiesChanged(nameof(PlaySound), nameof(ThemeIsToggled), nameof(FontSize), nameof(ColorChoice), nameof(SelectedBackgroundColor));
         }
 
+        void UpdateDecimalState()
+        {
+            decimalButtonPressed = BillAmount.Contains('.');
+            amountDecimalNumbers = decimalButtonPressed ? BillAmount.Length - BillAmount.IndexOf('.') - 1 : 0;
+        }
+
+        bool TryParseBill(out double parsedAmount) => double.TryParse(BillAmount, out parsedAmount);
+
         void LoadPreferenceValues()
         {
-            PlaySound = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(PlaySound), false);
-            ThemeIsToggled = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ThemeIsToggled), true);
-            FontSize = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(FontSize), 14.0);
-            ColorChoice = Microsoft.Maui.Storage.Preferences.Default.Get(nameof(ColorChoice), "Red");
+            PlaySound = LoadAndNotify(nameof(PlaySound), false, nameof(PlaySound));
+            ThemeIsToggled = LoadAndNotify(nameof(ThemeIsToggled), true, nameof(ThemeIsToggled));
+            FontSize = LoadAndNotify(nameof(FontSize), 14.0, nameof(FontSize));
+            ColorChoice = LoadAndNotify(nameof(ColorChoice), "Red", nameof(ColorChoice), nameof(SelectedBackgroundColor));
             SelectedBackgroundColor = Color.Parse(ColorChoice);
-        }            
+        }
 
-        void UpdateField<T>(ref T field, T value, params string[] dependentProperties)
+        T LoadAndNotify<T>(string key, T defaultValue, params string[] dependentProperties)
         {
-            if (!EqualityComparer<T>.Default.Equals(field, value))
-            {
-                field = value;
-                NotifyPropertyChanged();
-                NotifyMultiplePropertiesChanged(dependentProperties);
-            }
+            T value = LoadPreference(key, defaultValue);
+            NotifyMultiplePropertiesChanged(dependentProperties);
+            return value;
+        }
+
+        T LoadPreference<T>(string key, T defaultValue) =>
+            Microsoft.Maui.Storage.Preferences.Default.Get(key, defaultValue);
+
+        bool UpdateAndPersist<T>(string key, ref T field, T value, params string[] dependentProperties)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+
+            field = value;
+            Microsoft.Maui.Storage.Preferences.Default.Set(key, field);
+            NotifyMultiplePropertiesChanged(dependentProperties);
+            return true;
+        }
+
+        bool UpdateField<T>(ref T field, T value, params string[] dependentProperties)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+
+            field = value;
+            NotifyMultiplePropertiesChanged(dependentProperties);
+            return true;
         }
 
         void NotifyMultiplePropertiesChanged(params string[] propertyNames)
