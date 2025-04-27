@@ -3,8 +3,27 @@
              xmlns:sf="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              xmlns:local="clr-namespace:DylanDeSouzaTipCalculator"
              x:Class="DylanDeSouzaTipCalculator.MainPage"
-             x:DataType="local:Model"
-             BackgroundColor="{AppThemeBinding Light='White', Dark='Black'}">
+             x:DataType="local:Model">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="{Binding FontSize}"/>
+            </Style>
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{Binding SelectedBackgroundColor}"/>
+                <Setter Property="FontSize" Value="{Binding FontSize}"/>
+            </Style>
+            <Style x:Key="HorizontalStackStyle" TargetType="HorizontalStackLayout">
+                <Setter Property="Spacing" Value="10"/>
+            </Style>
+            <Style x:Key="VerticalStackStyle" TargetType="VerticalStackLayout">
+                <Setter Property="Spacing" Value="5"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -15,23 +34,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
-            <HorizontalStackLayout Spacing="10">
-                <Label Text="Bill:"/>
-                <Label Text="{Binding BillAmount, StringFormat='{0:F2}'}"/>
+        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource VerticalStackStyle}">
+            <HorizontalStackLayout Style="{StaticResource HorizontalStackStyle}">
+                <Label Text="Bill:" Style="{StaticResource LabelStyle}"/>
+                <Label Text="{Binding BillAmount, StringFormat='{0:F2}'}" Style="{StaticResource LabelStyle}"/>
             </HorizontalStackLayout>
-            <HorizontalStackLayout Spacing="10">
-                <Label Text="Tip:"/>
-                <Label Text="{Binding TipAmount, StringFormat='{0:F2}'}"/>
+            <HorizontalStackLayout Style="{StaticResource HorizontalStackStyle}">
+                <Label Text="Tip:" Style="{StaticResource LabelStyle}"/>
+                <Label Text="{Binding TipAmount, StringFormat='{0:F2}'}" Style="{StaticResource LabelStyle}"/>
             </HorizontalStackLayout>
-            <HorizontalStackLayout Spacing="10">
-                <Label Text="Total:"/>
-                <Label Text="{Binding Total, StringFormat='{0:F2}'}"/>
+            <HorizontalStackLayout Style="{StaticResource HorizontalStackStyle}">
+                <Label Text="Total:" Style="{StaticResource LabelStyle}"/>
+                <Label Text="{Binding Total, StringFormat='{0:F2}'}" Style="{StaticResource LabelStyle}"/>
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
-            <Label Text="Tip Percentage:" HorizontalOptions="Center" VerticalTextAlignment="Center"/>
+        <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource VerticalStackStyle}">
+            <Label Text="Tip Percentage:" Style="{StaticResource LabelStyle}"/>
             <sf:SfSlider Value="{Binding TipPercentage}">
                 <sf:SfSlider.Tooltip>
                     <sf:SliderTooltip ShowAlways="False" NumberFormat="P0"/>
@@ -39,15 +58,15 @@
             </sf:SfSlider>
         </StackLayout>
 
-        <VerticalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="5">
-            <Label Text="Amount Diners:"/>
-            <HorizontalStackLayout Spacing="10">
-                <Label Text="{Binding AmountDiners}"/>
+        <VerticalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource VerticalStackStyle}">
+            <Label Text="Amount Diners:" Style="{StaticResource LabelStyle}"/>
+            <HorizontalStackLayout Style="{StaticResource HorizontalStackStyle}">
+                <Label Text="{Binding AmountDiners}" Style="{StaticResource LabelStyle}"/>
                 <Stepper Increment="1" Minimum="1" Value="{Binding AmountDiners}" BackgroundColor="{AppThemeBinding Light='LightGray', Dark='Black'}"/>
             </HorizontalStackLayout>
             <VerticalStackLayout Spacing="2">
-                <Label Text="Split Amount:"/>
-                <Label Text="{Binding SplitAmount, StringFormat='{0:F2}'}"/>
+                <Label Text="Split Amount:" Style="{StaticResource LabelStyle}"/>
+                <Label Text="{Binding SplitAmount, StringFormat='{0:F2}'}" Style="{StaticResource LabelStyle}"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
 
@@ -64,23 +83,22 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Button Text="7" Grid.Row="0" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="8" Grid.Row="0" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="9" Grid.Row="0" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="4" Grid.Row="1" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="5" Grid.Row="1" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="6" Grid.Row="1" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="1" Grid.Row="2" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="2" Grid.Row="2" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="3" Grid.Row="2" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="0" Grid.Row="3" Grid.Column="0" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="." Grid.Row="3" Grid.Column="1" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
-            <Button Text="C" Grid.Row="3" Grid.Column="2" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
+            <Button Text="7" Grid.Row="0" Grid.Column="0" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="8" Grid.Row="0" Grid.Column="1" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="9" Grid.Row="0" Grid.Column="2" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="4" Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="5" Grid.Row="1" Grid.Column="1" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="6" Grid.Row="1" Grid.Column="2" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="1" Grid.Row="2" Grid.Column="0" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="2" Grid.Row="2" Grid.Column="1" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="3" Grid.Row="2" Grid.Column="2" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="0" Grid.Row="3" Grid.Column="0" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="." Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
+            <Button Text="C" Grid.Row="3" Grid.Column="2" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
         </Grid>
 
-    
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Text="Prefs" Clicked="Button_Clicked" BackgroundColor="{Binding SelectedBackgroundColor}"/>
+            <Button Text="Prefs" Style="{StaticResource ButtonStyle}" Clicked="Button_Clicked"/>
         </Grid>
     </Grid>
 </ContentPage>
