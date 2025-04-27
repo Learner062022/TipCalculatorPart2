@@ -4,46 +4,57 @@
              x:Class="DylanDeSouzaTipCalculator.Preferences"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              xmlns:local="clr-namespace:DylanDeSouzaTipCalculator"
-             x:DataType="local:Model"
-             BackgroundColor="{AppThemeBinding Light='White', Dark='Black'}">
+             x:DataType="local:Model">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="{Binding FontSize}"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="PickerStyle" TargetType="Picker">
+                <Setter Property="FontSize" Value="{Binding FontSize}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <VerticalStackLayout Grid.Row="0" Grid.Column="0">
-            <Label Text="Sound" 
-                   VerticalTextAlignment="Center" />
-            <Switch IsToggled="{Binding PlaySound}" />
+            <Label Text="Sound" Style="{StaticResource LabelStyle}"/>
+            <Switch IsToggled="{Binding PlaySound}"/>
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Picker SelectedItem="{Binding ColorChoice}" 
                     Title="Color Scheme" 
-                    ItemsSource="{Binding ColorChoices}" />
+                    ItemsSource="{Binding ColorChoices}" Style="{StaticResource PickerStyle}"/>
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Row="2" Grid.Column="0">
-            <Label Text="Theme" 
-                   VerticalTextAlignment="Center" />
-            <Switch IsToggled="{Binding ThemeIsToggled}" />
+            <Label Text="Theme" Style="{StaticResource LabelStyle}"/>
+            <Switch IsToggled="{Binding ThemeIsToggled}"/>
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Row="3" Grid.ColumnSpan="2">
-            <Label Text="Font Size" 
-                   VerticalTextAlignment="Center" HorizontalOptions="Center"/>
-            <sf:SfSlider Value="{Binding FontSize}">
+            <Label Text="Font Size" Style="{StaticResource LabelStyle}"/>
+            <sf:SfSlider Value="{Binding FontSize}"
+                         Minimum="14"
+                         Maximum="18">
                 <sf:SfSlider.Tooltip>
                     <sf:SliderTooltip ShowAlways="False" 
-                                      NumberFormat="P0" />
+                                      NumberFormat="N0"/>
                 </sf:SfSlider.Tooltip>
             </sf:SfSlider>
         </VerticalStackLayout>
