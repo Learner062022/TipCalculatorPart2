@@ -14,7 +14,7 @@ Develop a user-centric application that integrates functionality with customizat
 ### New Functionalities  
 - Preferences screen added for customization:  
   - Toggle between light and dark mode.  
-  - Choose button background color.  
+  - Choose buttons' background color.  
   - Enable or disable button clicking sound.  
   - Resumes where the user last left off.  
   - Adjust controls' font size.
