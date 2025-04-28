@@ -1,10 +1,13 @@
 # TipCalculatorPart2
 
 ## Project Overview
+The TipCalculator project is a user-centric application designed to streamline tip calculation while offering dynamic customization and intuitive navigation. It integrates advanced features like light/dark mode toggling, button color customization and personal font size adjustments to acter to diverse user preferences. The application ensures continuity with seamless page resumption and provides a cohesive, accessible and adaptable user experience. Built with robust architectural principles, it leverages modular state management and efficient property synchronization to maintain responsiveness and scalability across various devices.
 
 ## Motivation
+Enhance user experience by providing seamless navigation, intuitive customization and personalized settings to improve accessibility, engagement and usability across the application.
 
 ## Goal
+Develop a user-centric application that integrates functionality with customization to deliver a personalized, visually cohesive and adaptable interface.
 
 ## Features
 
@@ -14,16 +17,12 @@
   - Choose button background color.  
   - Enable or disable button clicking sound.  
   - Resumes where the user last left off.  
-
-### Enhanced User Experience
+  - Adjust controls' font size.
 
 ## Architecture
 
 ### Updates
-Encapsulated UI property change notifications via the INotifyPropertyChanged interface to ensure synchronization of dependent properties across the app. Streamlined audio setup, playback logic and preference handling within the model. Established dynamic navigation using the CurrentPageOn property for seamless resumption of the last visited page. Achieved modularity through consolidated state management and centralized cascading changes. Enhanced user customization by integrating preferences, adding properties for themes, colors and navigation.
-
-### New Components
-Needs to exclusively focus on how the newly introduced elemengts integrated into the overall architecture.
+Encapsulated UI property change notifications via the INotifyPropertyChanged interface to ensure synchronization of dependent properties across the app. Streamlined audio setup, playback logic and preference handling within the model. Established dynamic navigation using the CurrentPageOn property for seamless resumption of the last visited page. Achieved modularity through consolidated state management and centralized cascading changes. Enhanced user customization by integrating preferences, adding properties for themes, colors, navigation and controls' font size adjustments to improve accessibility and usability across different devices and user needs.
 
 ## Tech Stack
 
@@ -50,7 +49,7 @@ Needs to exclusively focus on how the newly introduced elemengts integrated into
 
 2. Clone the repository from GitHub:  
    ```bash
-   git clone https://github.com/Learner062022/TipCalculator.git
+   git clone https://github.com/Learner062022/TipCalculatorPart2.git
    ```
 
 ### Step-by-step Instructions
@@ -81,16 +80,23 @@ Needs to exclusively focus on how the newly introduced elemengts integrated into
   - For physical devices, ensure developer mode is enabled.  
 
 ## Troubleshooting
+- Used manual debugging techniques, including setting breakpoints to inspect code execution flow, employing 'Debug.WriteLines' statements to monitor variable states and logic and analyzing the stack to trace and resolve the issues effectively. 
 
 ## Testing and Validation
-
-### Automated Testing
+- Conducted functional testing by running the application to verify its core features, such as saving preferences, navigation and customization options, operated as expected. No automated or formalized testing methods were used beyond running the application to confirm basic functionality.
 
 ### Edge Cases
 
 ## Limitations
+- Background color customization is restricted to buttons only and limited to three colors.  
+- Font size adjustments are limited to controls that specifically support the `FontSize` property.  
+- Fixed minimum and maximum font size limits, offering no further flexibility.  
+- Static layout design does not dynamically adapt to changes in screen size or orientation.
 
 ## Future Improvements
+- Investigate the cause of the warning threshold by analyzing memory allocation, resource management and potential memory leaks and implement solutions to optimize performance.
+- Enhance preference management by saving user settings automatically when the application is closed.
+- Use same instantiated model throughout the app instead of creating seperate instances in the App and MainPage. 
 
 ## Contributing
 
