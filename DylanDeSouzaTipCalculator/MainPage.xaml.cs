@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace DylanDeSouzaTipCalculator
+﻿namespace DylanDeSouzaTipCalculator
 {
     public partial class MainPage : ContentPage
     {
@@ -21,6 +18,7 @@ namespace DylanDeSouzaTipCalculator
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            model.LoadPreferencesPageSettings();
             model.InitializeAudioPlayerAsync();
             model.LoadMainPagePreferences();
         }
