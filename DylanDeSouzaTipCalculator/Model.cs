@@ -1,6 +1,5 @@
 ﻿using Plugin.Maui.Audio;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace DylanDeSouzaTipCalculator
@@ -112,7 +111,6 @@ namespace DylanDeSouzaTipCalculator
         }
 
         public List<string> ColorChoices => colorChoices;
-
         
         public void PlayButtonSound() => buttonSound?.Play();
 
@@ -142,7 +140,7 @@ namespace DylanDeSouzaTipCalculator
             BillAmount += ".";
         }
 
-        public async Task InitializeAudioPlayerAsync() =>
+        public async void InitializeAudioPlayerAsync() =>
             buttonSound ??= AudioManager.Current.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("tap.wav"));
 
         public void LoadMainPagePreferences()
@@ -196,7 +194,7 @@ namespace DylanDeSouzaTipCalculator
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
 
             field = value;
-            Microsoft.Maui.Storage.Preferences.Default.Set(key, field);
+            Microsoft.Maui.Storage.Preferences.Default.Set(key, field); 
             NotifyMultiplePropertiesChanged(dependentProperties);
             return true;
         }
